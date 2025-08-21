@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
 :root {
+  /* Colores del brandbook Sidra Catalán */
+  --catalan-yellow: #f5d500;
+  --catalan-yellow-dark: #eec314;
+  --catalan-brown: #886600;
+  --catalan-green: #6d7300;
+  --catalan-green-light: #baca51;
+  --catalan-black: #1d1d1b;
+  
+  /* Variables de fondo */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1d1d1b;
 }
 
 @theme inline {
@@ -10,6 +19,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* Colores personalizados del brandbook */
+  --color-catalan-yellow: #f5d500;
+  --color-catalan-yellow-dark: #eec314;
+  --color-catalan-brown: #886600;
+  --color-catalan-green: #6d7300;
+  --color-catalan-green-light: #baca51;
+  --color-catalan-black: #1d1d1b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +39,33 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for age modal */
+.modal-open {
+  overflow: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--catalan-brown);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--catalan-yellow-dark);
 }

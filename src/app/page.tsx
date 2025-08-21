@@ -1,5 +1,496 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/outline";
+
+const AgeVerificationModal = ({
+  isOpen,
+  onAccept,
+  onReject,
+}: {
+  isOpen: boolean;
+  onAccept: () => void;
+  onReject: () => void;
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-white/95 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white border border-gray-100 p-12 max-w-md mx-4 text-center shadow-sm">
+        <h2 className="text-2xl font-light text-gray-900 mb-8">
+          Verificación de Edad
+        </h2>
+        <p className="text-gray-600 mb-12 leading-relaxed">
+          ¿Eres mayor de edad legal para consumir alcohol?
+        </p>
+        <div className="space-y-4">
+          <button
+            onClick={onAccept}
+            className="w-full border border-[var(--catalan-black)] text-[var(--catalan-black)] py-3 px-8 hover:bg-[var(--catalan-black)] hover:text-white transition-all duration-300"
+          >
+            Sí, soy mayor de edad
+          </button>
+          <button
+            onClick={onReject}
+            className="w-full text-gray-400 py-3 px-8 hover:text-gray-600 transition-colors duration-300"
+          >
+            No
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Header = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+    setMobileMenuOpen(false);
+  };
+
+  const navigation = [
+    { name: "Productos", id: "productos" },
+    { name: "Historia", id: "historia" },
+    { name: "Contacto", id: "contacto" },
+  ];
+
+  return (
+    <header
+      className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${
+        isScrolled
+          ? "bg-white/90 backdrop-blur-md border-b border-gray-100"
+          : "bg-transparent"
+      }`}
+    >
+      <nav className="flex items-center justify-between px-8 py-6 max-w-6xl mx-auto">
+        <button
+          onClick={() => scrollToSection("inicio")}
+          className="text-xl font-light tracking-[0.2em] text-gray-900"
+        >
+          CATALÁN
+        </button>
+
+        <div className="hidden md:flex space-x-12">
+          {navigation.map((item) => (
+            <button
+              key={item.name}
+              onClick={() => scrollToSection(item.id)}
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300"
+            >
+              {item.name}
+            </button>
+          ))}
+        </div>
+
+        <button
+          className="md:hidden p-2"
+          onClick={() => setMobileMenuOpen(true)}
+        >
+          <Bars3Icon className="h-5 w-5 text-gray-900" />
+        </button>
+      </nav>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-white">
+          <div className="flex items-center justify-between px-8 py-6">
+            <span className="text-xl font-light tracking-[0.2em] text-gray-900">
+              CATALÁN
+            </span>
+            <button onClick={() => setMobileMenuOpen(false)} className="p-2">
+              <XMarkIcon className="h-5 w-5 text-gray-900" />
+            </button>
+          </div>
+          <div className="px-8 py-12 space-y-8">
+            {navigation.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => scrollToSection(item.id)}
+                className="block text-lg text-gray-600 hover:text-gray-900 transition-colors duration-300"
+              >
+                {item.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+};
+
+const HeroSection = () => {
+  return (
+    <section
+      id="inicio"
+      className="min-h-screen flex items-center justify-center bg-white"
+    >
+      <div className="text-center max-w-4xl mx-auto px-8">
+        <h1 className="text-6xl md:text-8xl font-extralight tracking-[0.15em] text-gray-900 mb-8">
+          CATALÁN
+        </h1>
+        <div className="h-px w-24 bg-[var(--catalan-yellow)] mx-auto mb-8"></div>
+        <p className="text-lg md:text-xl text-gray-600 mb-4 font-light tracking-wide">
+          Sidra & Chicha
+        </p>
+        <p className="text-sm text-gray-400 mb-16 tracking-widest">
+          DESDE 1850
+        </p>
+        <button
+          onClick={() =>
+            document
+              .getElementById("productos")
+              ?.scrollIntoView({ behavior: "smooth" })
+          }
+          className="border border-gray-900 text-gray-900 py-4 px-12 hover:bg-gray-900 hover:text-white transition-all duration-500 text-sm tracking-widest"
+        >
+          DESCUBRIR
+        </button>
+      </div>
+    </section>
+  );
+};
+
+// Products Section (Minimalista)
+const ProductsSection = () => {
+  const products = [
+    {
+      name: "Sidra",
+      description:
+        "Elaborada con manzanas ancestrales siguiendo métodos tradicionales de Los Ríos.",
+      number: "01",
+    },
+    {
+      name: "Chicha",
+      description:
+        "Destilado artesanal de máxima calidad con el sabor auténtico de nuestra tradición.",
+      number: "02",
+    },
+    {
+      name: "Especial",
+      description:
+        "Edición limitada que celebra más de 170 años de excelencia artesanal.",
+      number: "03",
+    },
+  ];
+
+  return (
+    <section id="productos" className="py-32 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-8">
+        <div className="mb-24 text-center">
+          <h2 className="text-4xl md:text-5xl font-extralight tracking-wide text-gray-900 mb-4">
+            Productos
+          </h2>
+          <div className="h-px w-16 bg-[var(--catalan-yellow)] mx-auto"></div>
+        </div>
+
+        <div className="space-y-24">
+          {products.map((product) => (
+            <div
+              key={product.name}
+              className="grid md:grid-cols-12 gap-8 items-center"
+            >
+              <div className="md:col-span-2">
+                <span className="text-6xl font-extralight text-gray-200">
+                  {product.number}
+                </span>
+              </div>
+              <div className="md:col-span-6">
+                <h3 className="text-3xl font-light text-gray-900 mb-4 tracking-wide">
+                  {product.name}
+                </h3>
+                <p className="text-gray-600 leading-relaxed max-w-md">
+                  {product.description}
+                </p>
+              </div>
+              <div className="md:col-span-4">
+                <div className="h-64 bg-gradient-to-br from-[var(--catalan-yellow)] to-[var(--catalan-yellow-dark)] opacity-10"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// About Section (Minimalista)
+const AboutSection = () => {
+  return (
+    <section id="historia" className="py-32 bg-white">
+      <div className="max-w-6xl mx-auto px-8">
+        <div className="grid md:grid-cols-2 gap-24 items-center">
+          <div>
+            <h2 className="text-4xl md:text-5xl font-extralight tracking-wide text-gray-900 mb-8">
+              Historia
+            </h2>
+            <div className="h-px w-16 bg-[var(--catalan-yellow)] mb-12"></div>
+
+            <div className="space-y-8 text-gray-600 leading-relaxed">
+              <p>
+                Desde 1850, Catalán representa la excelencia en la elaboración
+                artesanal de sidra y chicha en la región de Los Ríos.
+              </p>
+              <p>
+                Seis generaciones han perfeccionado nuestros métodos,
+                preservando la tradición mientras innovamos con respeto al
+                terroir único de nuestra tierra.
+              </p>
+              <p>
+                Cada botella es testimonio de más de 170 años de dedicación a la
+                calidad y la autenticidad.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-12">
+            <div className="text-center border-l-2 border-[var(--catalan-yellow)] pl-8">
+              <div className="text-4xl font-extralight text-gray-900 mb-2">
+                175+
+              </div>
+              <div className="text-sm text-gray-600 tracking-widest">
+                AÑOS DE TRADICIÓN
+              </div>
+            </div>
+            <div className="text-center border-l-2 border-[var(--catalan-yellow)] pl-8">
+              <div className="text-4xl font-extralight text-gray-900 mb-2">
+                6
+              </div>
+              <div className="text-sm text-gray-600 tracking-widest">
+                GENERACIONES
+              </div>
+            </div>
+            <div className="text-center border-l-2 border-[var(--catalan-yellow)] pl-8">
+              <div className="text-4xl font-extralight text-gray-900 mb-2">
+                100%
+              </div>
+              <div className="text-sm text-gray-600 tracking-widest">
+                ARTESANAL
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Contact Section (Minimalista)
+const ContactSection = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert("Mensaje enviado. Te contactaremos pronto.");
+    setFormData({ name: "", email: "", message: "" });
+  };
+
+  return (
+    <section id="contacto" className="py-32 bg-gray-50">
+      <div className="max-w-4xl mx-auto px-8">
+        <div className="text-center mb-24">
+          <h2 className="text-4xl md:text-5xl font-extralight tracking-wide text-gray-900 mb-4">
+            Contacto
+          </h2>
+          <div className="h-px w-16 bg-[var(--catalan-yellow)] mx-auto"></div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-24">
+          <div className="space-y-12">
+            <div>
+              <h3 className="text-lg font-light text-gray-900 mb-4 tracking-wide">
+                Dirección
+              </h3>
+              <p className="text-gray-600">Los Ríos, Chile</p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-light text-gray-900 mb-4 tracking-wide">
+                Contacto
+              </h3>
+              <div className="space-y-2 text-gray-600">
+                <p>+56 9 XXXX XXXX</p>
+                <p>info@sidracatalan.cl</p>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-light text-gray-900 mb-4 tracking-wide">
+                Horarios
+              </h3>
+              <div className="space-y-2 text-gray-600">
+                <p>Lunes a Viernes: 9:00 - 18:00</p>
+                <p>Sábado: 9:00 - 14:00</p>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div>
+              <input
+                type="text"
+                name="name"
+                placeholder="Nombre"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+                className="w-full border-0 border-b border-gray-200 bg-transparent py-4 text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-0 transition-colors duration-300"
+              />
+            </div>
+
+            <div>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+                className="w-full border-0 border-b border-gray-200 bg-transparent py-4 text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-0 transition-colors duration-300"
+              />
+            </div>
+
+            <div>
+              <textarea
+                name="message"
+                placeholder="Mensaje"
+                value={formData.message}
+                onChange={handleInputChange}
+                required
+                rows={4}
+                className="w-full border-0 border-b border-gray-200 bg-transparent py-4 text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-0 resize-none transition-colors duration-300"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="border border-gray-900 text-gray-900 py-4 px-12 hover:bg-gray-900 hover:text-white transition-all duration-500 text-sm tracking-widest"
+            >
+              ENVIAR
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Footer (Minimalista)
+const Footer = () => {
+  return (
+    <footer className="bg-white border-t border-gray-100">
+      <div className="max-w-6xl mx-auto px-8 py-16">
+        <div className="grid md:grid-cols-3 gap-12 items-start">
+          <div>
+            <div className="text-xl font-light tracking-[0.2em] text-gray-900 mb-4">
+              CATALÁN
+            </div>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Sidra & Chicha artesanal desde 1850.
+              <br />
+              Manzanas ancestrales de Los Ríos.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium text-gray-900 tracking-wide">
+              Productos
+            </h4>
+            <div className="space-y-2 text-sm text-gray-600">
+              <p>Sidra Tradicional</p>
+              <p>Chicha Premium</p>
+              <p>Edición Especial</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium text-gray-900 tracking-wide">
+              Síguenos
+            </h4>
+            <div className="space-y-2 text-sm text-gray-600">
+              <p>Instagram</p>
+              <p>Facebook</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-100 mt-16 pt-8 text-center">
+          <p className="text-xs text-gray-400 tracking-wide">
+            © 2025 CATALÁN. TRADICIÓN DESDE 1850.
+          </p>
+          <p className="text-xs text-gray-400 mt-2">
+            Consume responsablemente. Prohibida su venta a menores de edad.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+// Componente Principal
 const Home = () => {
-  return <div>Home</div>;
+  const [showAgeModal, setShowAgeModal] = useState(true);
+
+  useEffect(() => {
+    const ageVerified = localStorage.getItem("ageVerified");
+    if (ageVerified === "true") {
+      setShowAgeModal(false);
+    }
+  }, []);
+
+  const handleAcceptAge = () => {
+    localStorage.setItem("ageVerified", "true");
+    setShowAgeModal(false);
+  };
+
+  const handleRejectAge = () => {
+    window.location.href = "https://www.google.com";
+  };
+
+  return (
+    <>
+      <AgeVerificationModal
+        isOpen={showAgeModal}
+        onAccept={handleAcceptAge}
+        onReject={handleRejectAge}
+      />
+
+      <Header />
+      <HeroSection />
+      <ProductsSection />
+      <AboutSection />
+      <ContactSection />
+      <Footer />
+    </>
+  );
 };
 
 export default Home;
