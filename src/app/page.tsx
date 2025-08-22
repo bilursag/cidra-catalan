@@ -167,7 +167,13 @@ const Header = () => {
           onClick={() => scrollToSection("inicio")}
           className="text-xl font-light tracking-[0.2em] text-gray-900"
         >
-          CATALÁN
+          <Image
+            src="/logo.png"
+            alt="Catalán Logo"
+            width={100}
+            height={50}
+            className="mx-auto mb-2 md:mb-0"
+          />
         </button>
 
         <div className="hidden md:flex space-x-12">
@@ -175,7 +181,7 @@ const Header = () => {
             <button
               key={item.name}
               onClick={() => scrollToSection(item.id)}
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-300"
+              className="text-md text-gray-600 hover:text-gray-900 transition-colors duration-300"
             >
               {item.name}
             </button>
@@ -389,7 +395,6 @@ const ProductsSection = () => {
   );
 };
 
-// About Section (Minimalista con fade-in)
 const AboutSection = () => {
   return (
     <section id="historia" className="py-32 bg-white">
@@ -452,7 +457,6 @@ const AboutSection = () => {
   );
 };
 
-// Contact Section (Minimalista con fade-in)
 const ContactSection = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -570,7 +574,6 @@ const ContactSection = () => {
   );
 };
 
-// Footer (Minimalista con fade-in)
 const Footer = () => {
   return (
     <footer className="bg-white border-t border-gray-100">
@@ -579,7 +582,13 @@ const Footer = () => {
           <div className="grid md:grid-cols-3 gap-12 items-start">
             <div>
               <div className="text-xl font-light tracking-[0.2em] text-gray-900 mb-4">
-                CATALÁN
+                <Image
+                  src="/logo.png"
+                  alt="Catalán Logo"
+                  width={150}
+                  height={75}
+                  className="mb-4"
+              />
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">
                 Sidra & Chicha artesanal desde 1850.
@@ -626,7 +635,6 @@ const Footer = () => {
   );
 };
 
-// Componente Principal
 const Home = () => {
   const [showAgeModal, setShowAgeModal] = useState(true);
 
