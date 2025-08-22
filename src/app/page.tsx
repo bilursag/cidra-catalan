@@ -1,7 +1,92 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/outline";
+
+const useIntersectionObserver = (
+  options = {}
+): [React.RefObject<HTMLDivElement | null>, boolean] => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const targetRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setIsIntersecting(true);
+          setHasAnimated(true);
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "50px",
+        ...options,
+      }
+    );
+
+    const currentTarget = targetRef.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [hasAnimated, options]);
+
+  return [targetRef, isIntersecting];
+};
+
+type FadeInSectionProps = {
+  children: React.ReactNode;
+  delay?: number;
+  direction?: "up" | "down" | "left" | "right";
+  className?: string;
+};
+
+const FadeInSection = ({
+  children,
+  delay = 0,
+  direction = "up",
+  className = "",
+}: FadeInSectionProps) => {
+  const [ref, isVisible] = useIntersectionObserver();
+
+  const getTransformClass = () => {
+    switch (direction) {
+      case "up":
+        return "translate-y-8";
+      case "down":
+        return "-translate-y-8";
+      case "left":
+        return "translate-x-8";
+      case "right":
+        return "-translate-x-8";
+      default:
+        return "translate-y-8";
+    }
+  };
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-1000 ease-out ${
+        isVisible
+          ? "opacity-100 translate-x-0 translate-y-0"
+          : `opacity-0 ${getTransformClass()}`
+      } ${className}`}
+      style={{
+        transitionDelay: isVisible ? `${delay}ms` : "0ms",
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 
 const AgeVerificationModal = ({
   isOpen,
@@ -110,7 +195,13 @@ const Header = () => {
         <div className="fixed inset-0 z-50 bg-white">
           <div className="flex items-center justify-between px-8 py-6">
             <span className="text-xl font-light tracking-[0.2em] text-gray-900">
-              CATALÁN
+              <Image
+                src="/logo.png"
+                alt="Catalán Logo"
+                width={100}
+                height={50}
+                className="mx-auto mb-8"
+              />
             </span>
             <button onClick={() => setMobileMenuOpen(false)} className="p-2">
               <XMarkIcon className="h-5 w-5 text-gray-900" />
@@ -134,38 +225,105 @@ const Header = () => {
 };
 
 const HeroSection = () => {
+  const [heroVisible, setHeroVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setHeroVisible(true);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section
       id="inicio"
-      className="min-h-screen flex items-center justify-center bg-white"
+      className="min-h-screen flex items-center justify-center bg-white relative overflow-hidden"
     >
-      <div className="text-center max-w-4xl mx-auto px-8">
-        <h1 className="text-6xl md:text-8xl font-extralight tracking-[0.15em] text-gray-900 mb-8">
-          CATALÁN
-        </h1>
-        <div className="h-px w-24 bg-[var(--catalan-yellow)] mx-auto mb-8"></div>
-        <p className="text-lg md:text-xl text-gray-600 mb-4 font-light tracking-wide">
-          Sidra & Chicha
-        </p>
-        <p className="text-sm text-gray-400 mb-16 tracking-widest">
-          DESDE 1850
-        </p>
-        <button
-          onClick={() =>
-            document
-              .getElementById("productos")
-              ?.scrollIntoView({ behavior: "smooth" })
-          }
-          className="border border-gray-900 text-gray-900 py-4 px-12 hover:bg-gray-900 hover:text-white transition-all duration-500 text-sm tracking-widest"
+      <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('/barrels.png')`,
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-white/50"></div>
+      </div>
+
+      <div className="text-center max-w-4xl mx-auto px-8 relative z-10">
+        <div
+          className={`transition-all duration-1500 ease-out ${
+            heroVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-12"
+          }`}
         >
-          DESCUBRIR
-        </button>
+          <Image
+            src="/logo.png"
+            alt="Catalán Logo"
+            width={700}
+            height={350}
+            className="mx-auto mb-8"
+          />
+        </div>
+
+        <div
+          className={`transition-all duration-1200 ease-out delay-300 ${
+            heroVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-8"
+          }`}
+        >
+          <div className="h-px w-24 bg-[var(--catalan-yellow)] mx-auto mb-8"></div>
+        </div>
+
+        <div
+          className={`transition-all duration-1200 ease-out delay-500 ${
+            heroVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-8"
+          }`}
+        >
+          <p className="text-lg md:text-xl text-gray-900 mb-4 font-light tracking-wide">
+            Sidra & Chicha
+          </p>
+        </div>
+
+        <div
+          className={`transition-all duration-1200 ease-out delay-700 ${
+            heroVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-8"
+          }`}
+        >
+          <p className="text-sm text-gray-200 mb-16 tracking-widest">
+            DESDE 1850
+          </p>
+        </div>
+
+        <div
+          className={`transition-all duration-1200 ease-out delay-1000 ${
+            heroVisible
+              ? "opacity-100 translate-y-0 scale-100"
+              : "opacity-0 translate-y-8 scale-95"
+          }`}
+        >
+          <button
+            onClick={() =>
+              document
+                .getElementById("productos")
+                ?.scrollIntoView({ behavior: "smooth" })
+            }
+            className="border border-gray-900 text-gray-900 py-4 px-12 hover:bg-gray-900 hover:text-white transition-all duration-500 text-sm tracking-widest transform hover:scale-105"
+          >
+            DESCUBRIR
+          </button>
+        </div>
       </div>
     </section>
   );
 };
 
-// Products Section (Minimalista)
+
 const ProductsSection = () => {
   const products = [
     {
@@ -191,36 +349,39 @@ const ProductsSection = () => {
   return (
     <section id="productos" className="py-32 bg-gray-50">
       <div className="max-w-6xl mx-auto px-8">
-        <div className="mb-24 text-center">
+        <FadeInSection className="mb-24 text-center">
           <h2 className="text-4xl md:text-5xl font-extralight tracking-wide text-gray-900 mb-4">
             Productos
           </h2>
           <div className="h-px w-16 bg-[var(--catalan-yellow)] mx-auto"></div>
-        </div>
+        </FadeInSection>
 
         <div className="space-y-24">
-          {products.map((product) => (
-            <div
+          {products.map((product, index) => (
+            <FadeInSection
               key={product.name}
-              className="grid md:grid-cols-12 gap-8 items-center"
+              delay={index * 200}
+              direction={index % 2 === 0 ? "left" : "right"}
             >
-              <div className="md:col-span-2">
-                <span className="text-6xl font-extralight text-gray-200">
-                  {product.number}
-                </span>
+              <div className="grid md:grid-cols-12 gap-8 items-center">
+                <div className="md:col-span-2">
+                  <span className="text-6xl font-extralight text-gray-200">
+                    {product.number}
+                  </span>
+                </div>
+                <div className="md:col-span-6">
+                  <h3 className="text-3xl font-light text-gray-900 mb-4 tracking-wide">
+                    {product.name}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed max-w-md">
+                    {product.description}
+                  </p>
+                </div>
+                <div className="md:col-span-4">
+                  <div className="h-64 bg-gradient-to-br from-[var(--catalan-yellow)] to-[var(--catalan-yellow-dark)] opacity-10"></div>
+                </div>
               </div>
-              <div className="md:col-span-6">
-                <h3 className="text-3xl font-light text-gray-900 mb-4 tracking-wide">
-                  {product.name}
-                </h3>
-                <p className="text-gray-600 leading-relaxed max-w-md">
-                  {product.description}
-                </p>
-              </div>
-              <div className="md:col-span-4">
-                <div className="h-64 bg-gradient-to-br from-[var(--catalan-yellow)] to-[var(--catalan-yellow-dark)] opacity-10"></div>
-              </div>
-            </div>
+            </FadeInSection>
           ))}
         </div>
       </div>
@@ -228,13 +389,13 @@ const ProductsSection = () => {
   );
 };
 
-// About Section (Minimalista)
+// About Section (Minimalista con fade-in)
 const AboutSection = () => {
   return (
     <section id="historia" className="py-32 bg-white">
       <div className="max-w-6xl mx-auto px-8">
         <div className="grid md:grid-cols-2 gap-24 items-center">
-          <div>
+          <FadeInSection direction="left">
             <h2 className="text-4xl md:text-5xl font-extralight tracking-wide text-gray-900 mb-8">
               Historia
             </h2>
@@ -255,41 +416,43 @@ const AboutSection = () => {
                 calidad y la autenticidad.
               </p>
             </div>
-          </div>
+          </FadeInSection>
 
-          <div className="space-y-12">
-            <div className="text-center border-l-2 border-[var(--catalan-yellow)] pl-8">
-              <div className="text-4xl font-extralight text-gray-900 mb-2">
-                175+
+          <FadeInSection direction="right" delay={300}>
+            <div className="space-y-12">
+              <div className="text-center border-l-2 border-[var(--catalan-yellow)] pl-8">
+                <div className="text-4xl font-extralight text-gray-900 mb-2">
+                  175+
+                </div>
+                <div className="text-sm text-gray-600 tracking-widest">
+                  AÑOS DE TRADICIÓN
+                </div>
               </div>
-              <div className="text-sm text-gray-600 tracking-widest">
-                AÑOS DE TRADICIÓN
+              <div className="text-center border-l-2 border-[var(--catalan-yellow)] pl-8">
+                <div className="text-4xl font-extralight text-gray-900 mb-2">
+                  6
+                </div>
+                <div className="text-sm text-gray-600 tracking-widest">
+                  GENERACIONES
+                </div>
+              </div>
+              <div className="text-center border-l-2 border-[var(--catalan-yellow)] pl-8">
+                <div className="text-4xl font-extralight text-gray-900 mb-2">
+                  100%
+                </div>
+                <div className="text-sm text-gray-600 tracking-widest">
+                  ARTESANAL
+                </div>
               </div>
             </div>
-            <div className="text-center border-l-2 border-[var(--catalan-yellow)] pl-8">
-              <div className="text-4xl font-extralight text-gray-900 mb-2">
-                6
-              </div>
-              <div className="text-sm text-gray-600 tracking-widest">
-                GENERACIONES
-              </div>
-            </div>
-            <div className="text-center border-l-2 border-[var(--catalan-yellow)] pl-8">
-              <div className="text-4xl font-extralight text-gray-900 mb-2">
-                100%
-              </div>
-              <div className="text-sm text-gray-600 tracking-widest">
-                ARTESANAL
-              </div>
-            </div>
-          </div>
+          </FadeInSection>
         </div>
       </div>
     </section>
   );
 };
 
-// Contact Section (Minimalista)
+// Contact Section (Minimalista con fade-in)
 const ContactSection = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -316,140 +479,148 @@ const ContactSection = () => {
   return (
     <section id="contacto" className="py-32 bg-gray-50">
       <div className="max-w-4xl mx-auto px-8">
-        <div className="text-center mb-24">
+        <FadeInSection className="text-center mb-24">
           <h2 className="text-4xl md:text-5xl font-extralight tracking-wide text-gray-900 mb-4">
             Contacto
           </h2>
           <div className="h-px w-16 bg-[var(--catalan-yellow)] mx-auto"></div>
-        </div>
+        </FadeInSection>
 
         <div className="grid md:grid-cols-2 gap-24">
-          <div className="space-y-12">
-            <div>
-              <h3 className="text-lg font-light text-gray-900 mb-4 tracking-wide">
-                Dirección
-              </h3>
-              <p className="text-gray-600">Los Ríos, Chile</p>
-            </div>
+          <FadeInSection direction="left" delay={200}>
+            <div className="space-y-12">
+              <div>
+                <h3 className="text-lg font-light text-gray-900 mb-4 tracking-wide">
+                  Dirección
+                </h3>
+                <p className="text-gray-600">Los Ríos, Chile</p>
+              </div>
 
-            <div>
-              <h3 className="text-lg font-light text-gray-900 mb-4 tracking-wide">
-                Contacto
-              </h3>
-              <div className="space-y-2 text-gray-600">
-                <p>+56 9 XXXX XXXX</p>
-                <p>info@sidracatalan.cl</p>
+              <div>
+                <h3 className="text-lg font-light text-gray-900 mb-4 tracking-wide">
+                  Contacto
+                </h3>
+                <div className="space-y-2 text-gray-600">
+                  <p>+56 9 XXXX XXXX</p>
+                  <p>info@sidracatalan.cl</p>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-light text-gray-900 mb-4 tracking-wide">
+                  Horarios
+                </h3>
+                <div className="space-y-2 text-gray-600">
+                  <p>Lunes a Viernes: 9:00 - 18:00</p>
+                  <p>Sábado: 9:00 - 14:00</p>
+                </div>
               </div>
             </div>
+          </FadeInSection>
 
-            <div>
-              <h3 className="text-lg font-light text-gray-900 mb-4 tracking-wide">
-                Horarios
-              </h3>
-              <div className="space-y-2 text-gray-600">
-                <p>Lunes a Viernes: 9:00 - 18:00</p>
-                <p>Sábado: 9:00 - 14:00</p>
+          <FadeInSection direction="right" delay={400}>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Nombre"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full border-0 border-b border-gray-200 bg-transparent py-4 text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-0 transition-colors duration-300"
+                />
               </div>
-            </div>
-          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div>
-              <input
-                type="text"
-                name="name"
-                placeholder="Nombre"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-                className="w-full border-0 border-b border-gray-200 bg-transparent py-4 text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-0 transition-colors duration-300"
-              />
-            </div>
+              <div>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full border-0 border-b border-gray-200 bg-transparent py-4 text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-0 transition-colors duration-300"
+                />
+              </div>
 
-            <div>
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                className="w-full border-0 border-b border-gray-200 bg-transparent py-4 text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-0 transition-colors duration-300"
-              />
-            </div>
+              <div>
+                <textarea
+                  name="message"
+                  placeholder="Mensaje"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  required
+                  rows={4}
+                  className="w-full border-0 border-b border-gray-200 bg-transparent py-4 text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-0 resize-none transition-colors duration-300"
+                />
+              </div>
 
-            <div>
-              <textarea
-                name="message"
-                placeholder="Mensaje"
-                value={formData.message}
-                onChange={handleInputChange}
-                required
-                rows={4}
-                className="w-full border-0 border-b border-gray-200 bg-transparent py-4 text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-0 resize-none transition-colors duration-300"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="border border-gray-900 text-gray-900 py-4 px-12 hover:bg-gray-900 hover:text-white transition-all duration-500 text-sm tracking-widest"
-            >
-              ENVIAR
-            </button>
-          </form>
+              <button
+                type="submit"
+                className="border border-gray-900 text-gray-900 py-4 px-12 hover:bg-gray-900 hover:text-white transition-all duration-500 text-sm tracking-widest transform hover:scale-105"
+              >
+                ENVIAR
+              </button>
+            </form>
+          </FadeInSection>
         </div>
       </div>
     </section>
   );
 };
 
-// Footer (Minimalista)
+// Footer (Minimalista con fade-in)
 const Footer = () => {
   return (
     <footer className="bg-white border-t border-gray-100">
       <div className="max-w-6xl mx-auto px-8 py-16">
-        <div className="grid md:grid-cols-3 gap-12 items-start">
-          <div>
-            <div className="text-xl font-light tracking-[0.2em] text-gray-900 mb-4">
-              CATALÁN
+        <FadeInSection>
+          <div className="grid md:grid-cols-3 gap-12 items-start">
+            <div>
+              <div className="text-xl font-light tracking-[0.2em] text-gray-900 mb-4">
+                CATALÁN
+              </div>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Sidra & Chicha artesanal desde 1850.
+                <br />
+                Manzanas ancestrales de Los Ríos.
+              </p>
             </div>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              Sidra & Chicha artesanal desde 1850.
-              <br />
-              Manzanas ancestrales de Los Ríos.
+
+            <div className="space-y-4">
+              <h4 className="text-sm font-medium text-gray-900 tracking-wide">
+                Productos
+              </h4>
+              <div className="space-y-2 text-sm text-gray-600">
+                <p>Sidra Tradicional</p>
+                <p>Chicha Premium</p>
+                <p>Edición Especial</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-sm font-medium text-gray-900 tracking-wide">
+                Síguenos
+              </h4>
+              <div className="space-y-2 text-sm text-gray-600">
+                <p>Instagram</p>
+                <p>Facebook</p>
+              </div>
+            </div>
+          </div>
+        </FadeInSection>
+
+        <FadeInSection delay={300}>
+          <div className="border-t border-gray-100 mt-16 pt-8 text-center">
+            <p className="text-xs text-gray-400 tracking-wide">
+              © 2025 CATALÁN. TRADICIÓN DESDE 1850.
+            </p>
+            <p className="text-xs text-gray-400 mt-2">
+              Consume responsablemente. Prohibida su venta a menores de edad.
             </p>
           </div>
-
-          <div className="space-y-4">
-            <h4 className="text-sm font-medium text-gray-900 tracking-wide">
-              Productos
-            </h4>
-            <div className="space-y-2 text-sm text-gray-600">
-              <p>Sidra Tradicional</p>
-              <p>Chicha Premium</p>
-              <p>Edición Especial</p>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-sm font-medium text-gray-900 tracking-wide">
-              Síguenos
-            </h4>
-            <div className="space-y-2 text-sm text-gray-600">
-              <p>Instagram</p>
-              <p>Facebook</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-t border-gray-100 mt-16 pt-8 text-center">
-          <p className="text-xs text-gray-400 tracking-wide">
-            © 2025 CATALÁN. TRADICIÓN DESDE 1850.
-          </p>
-          <p className="text-xs text-gray-400 mt-2">
-            Consume responsablemente. Prohibida su venta a menores de edad.
-          </p>
-        </div>
+        </FadeInSection>
       </div>
     </footer>
   );
