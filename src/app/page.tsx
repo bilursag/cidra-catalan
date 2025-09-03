@@ -157,9 +157,9 @@ const Header = () => {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${
-        isScrolled
-          ? "bg-white/90 backdrop-blur-md border-b border-gray-100"
-          : "bg-transparent"
+        isScrolled || mobileMenuOpen
+          ? "bg-white/95 backdrop-blur-md border-b border-gray-100"
+          : "bg-white/80 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none border-b border-gray-100/50 md:border-b-0"
       }`}
     >
       <nav className="flex items-center justify-between px-8 py-6 max-w-6xl mx-auto">
