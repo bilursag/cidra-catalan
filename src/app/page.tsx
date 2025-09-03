@@ -333,22 +333,25 @@ const HeroSection = () => {
 const ProductsSection = () => {
   const products = [
     {
-      name: "Sidra",
+      name: "Sidra Catalán Green Label",
       description:
-        "Elaborada con manzanas ancestrales siguiendo métodos tradicionales de Los Ríos.",
+        "Blend de 3 manzanas, Northem Spy, Reineta y Jonathan. Sabor dulce, acidez equilibrada y notas agrias. Hecha con manzanas ancestrales de la Region de los Rios, Valdivia, Chile.",
       number: "01",
+      image: "/green_label.png",
     },
     {
-      name: "Chicha",
+      name: "Sidra Catalán Yellow Label",
       description:
-        "Destilado artesanal de máxima calidad con el sabor auténtico de nuestra tradición.",
+        "Blend de 3 manzanas, 80% Manzana Limona (LemonApple y 20% entre) Northem Spy y Reineta. Sabor dulce, equilibrado con notas citricas. Hecha con manzanas ancestrales de la Region de los Rios, Valdivia, Chile.",
       number: "02",
+      image: "/yellow_label.png",
     },
     {
-      name: "Especial",
+      name: "Sidra Catalán Black Label",
       description:
-        "Edición limitada que celebra más de 170 años de excelencia artesanal.",
+        "Sidra 100% de manzana limona, Dulce, citrica, mantiene el sabor intacto de la manzana limona. Hecha con manzanas ancestrales y unicas de la Region de los Rios, Valdivia, Chile.",
       number: "03",
+      image: "/black_label.png",
     },
   ];
 
@@ -384,7 +387,15 @@ const ProductsSection = () => {
                   </p>
                 </div>
                 <div className="md:col-span-4">
-                  <div className="h-64 bg-gradient-to-br from-[var(--catalan-yellow)] to-[var(--catalan-yellow-dark)] opacity-10"></div>
+                  <div className="flex items-center justify-center">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      width={300}
+                      height={240}
+                      className="object-contain transition-transform duration-300 hover:scale-105 rounded-lg shadow-lg"
+                    />
+                  </div>
                 </div>
               </div>
             </FadeInSection>
@@ -505,18 +516,8 @@ const ContactSection = () => {
                   Contacto
                 </h3>
                 <div className="space-y-2 text-gray-600">
-                  <p>+56 9 XXXX XXXX</p>
+                  <p>+56 9 5653 2975</p>
                   <p>info@sidracatalan.cl</p>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-light text-gray-900 mb-4 tracking-wide">
-                  Horarios
-                </h3>
-                <div className="space-y-2 text-gray-600">
-                  <p>Lunes a Viernes: 9:00 - 18:00</p>
-                  <p>Sábado: 9:00 - 14:00</p>
                 </div>
               </div>
             </div>
