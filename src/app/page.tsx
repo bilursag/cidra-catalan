@@ -517,7 +517,7 @@ const ContactSection = () => {
                 </h3>
                 <div className="space-y-2 text-gray-600">
                   <p>+56 9 5653 2975</p>
-                  <p>info@sidracatalan.cl</p>
+                  <p>contacto@sidracatalan.cl</p>
                 </div>
               </div>
             </div>
